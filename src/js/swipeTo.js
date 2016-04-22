@@ -27,14 +27,17 @@
 		var swipeStart = settings.swipeStart;
 		var swipeMove = settings.swipeMove;
 		var swipeEnd = settings.swipeEnd;
+
+		var closeOpened = function(that){
+			that.addClass('swiped');
+			animateTo(that, 0);
+			that.removeClass('open');
+		}
 		
 		var onTouchStart = $('body').on('touchstart', handler, function(ev) {
 			if (settings.singleSwipe) {
 				$(".open").each(function (indx, element) {
-					that = $(this);
-					that.addClass('swiped');
-					animateTo(that, 0);
-					that.removeClass('open');
+					closeOpened($(this));
 				});
 			}
 
@@ -108,9 +111,7 @@
 					var that = $(this);
 					var e = ev.originalEvent;
 					e.preventDefault();
-					that.addClass('swiped');
-					animateTo(that, 0);
-					that.removeClass('open');
+					closeOpened($(this));
 				}
 				
 			});
