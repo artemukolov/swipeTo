@@ -8,7 +8,8 @@
 			binder: true,
 			swipeStart: function() {},
 			swipeMove: function() {},
-			swipeEnd: function() {}
+			swipeEnd: function() {},
+			singleSwipe: false
 		}, options );
 		
 		var start;
@@ -28,6 +29,16 @@
 		var swipeEnd = settings.swipeEnd;
 		
 		var onTouchStart = $('body').on('touchstart', handler, function(ev) {
+			if (settings.singleSwipe) {
+				$(".open").each(function (indx, element) {
+					that = $(this);
+					that.addClass('swiped');
+					animateTo(that, 0);
+					that.removeClass('open');
+				});
+			}
+
+
 			var that = $(this);
 		    var e = ev.originalEvent;
 		    start = e.touches[0].clientX;
@@ -37,6 +48,7 @@
 		    if(typeof swipeStart == 'function') {
 			    swipeStart.call(this);   
 		    }
+
 		});
 		
 		var onTouchMove = $('body').on('touchmove', handler, function(ev) {
