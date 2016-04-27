@@ -30,28 +30,26 @@
 		var swipeEnd   = settings.swipeEnd;
 
 		var closeOpened = function(that){
-			that.addClass('swiped');
+			//that.removeClass('swiped');
 			animateTo(that, 0);
 			that.removeClass('open');
 		}
 		
 		var onTouchStart = $('body').on('touchstart', handler, function(ev) {
-			
-			
-
-			if (!$(this).hasClass("open")){
-				settings.closedElementFunction($(this));
-			}
 
 
-
-			if (settings.singleSwipe){
-				$(".open").each(function (indx, element) {
-					closeOpened($(this));
-				});
-			}
 
 			var that = $(this);
+            if (!that.hasClass("open")){
+                if (settings.singleSwipe){
+                    $(".open").each(function (indx, element) {
+                        closeOpened($(this));
+                    });
+                }
+            } else {
+                closeOpened(that);
+            }
+
 		    var e = ev.originalEvent;
 		    start = e.touches[0].clientX;
 		    vertical = e.touches[0].clientY;
@@ -95,23 +93,42 @@
 		});
 		
 		var onTouchEnd = $('body').on('touchend', handler, function(ev) {
+
 			var that = $(this);
 			var e = ev.originalEvent;
 			wrapScroll.removeClass('overflow-hidden');
-			that.removeClass('swiping');
+
 			moveStatus = getPosition(that);
 		    var absMoveStatus = Math.abs(moveStatus);
-		    that.addClass('swiped');
-			if(absMoveStatus < minSwipe) {
+
+            var closing = false;
+
+			if ((absMoveStatus < minSwipe) && (that.hasClass("swiped"))) {
+                closing = true;
 				animateTo(that, 0);
+                console.log("закрываю");
 				that.removeClass('open');
+                that.removeClass('swiped');
 			} else {
-				animateTo(that, 0 - minSwipe);
-				that.addClass('open');
+                if (that.hasClass('swiping')) {
+                    that.removeClass('swiping');
+                    animateTo(that, 0 - minSwipe);
+                    console.log("Открываю");
+                    that.addClass('open');
+                    that.addClass('swiped');
+                }
 			}
+
+            console.log(closing);
+
+            if ((!closing) && (!$(this).hasClass("open")) && (!$(this).hasClass("swiped"))){
+                settings.closedElementFunction($(this));
+            }
+
 		    if(typeof swipeEnd == 'function') {
 			    swipeEnd.call(this);   
 		    }
+
 		});
 		
 		if(binder) {
