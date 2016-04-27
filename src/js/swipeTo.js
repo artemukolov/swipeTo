@@ -1,6 +1,6 @@
 (function($) {
 	$.fn.swipeTo = function(options) {
-		
+
         var settings = $.extend({
 			minSwipe: 100,
 			angle: 10,
@@ -9,8 +9,9 @@
 			swipeStart: function() {},
 			swipeMove: function() {},
 			swipeEnd: function() {},
-			singleSwipe: false
-		}, options );
+			singleSwipe: false,
+			closedElementFunction: function(){}
+		}, options);
 		
 		var start;
 		var moving;
@@ -18,15 +19,15 @@
 		var verticalMov;
 		var direction;
 		var res;
-		var minSwipe = settings.minSwipe;
+		var minSwipe   = settings.minSwipe;
 		var moveStatus;
 		var wrapScroll = $(settings.wrapScroll);
-		var angle = settings.angle;
-		var handler = this.selector;
-		var binder = settings.binder;
+		var angle      = settings.angle;
+		var handler    = this.selector;
+		var binder     = settings.binder;
 		var swipeStart = settings.swipeStart;
-		var swipeMove = settings.swipeMove;
-		var swipeEnd = settings.swipeEnd;
+		var swipeMove  = settings.swipeMove;
+		var swipeEnd   = settings.swipeEnd;
 
 		var closeOpened = function(that){
 			that.addClass('swiped');
@@ -35,12 +36,20 @@
 		}
 		
 		var onTouchStart = $('body').on('touchstart', handler, function(ev) {
-			if (settings.singleSwipe) {
+			
+			
+
+			if (!$(this).hasClass("open")){
+				settings.closedElementFunction($(this));
+			}
+
+
+
+			if (settings.singleSwipe){
 				$(".open").each(function (indx, element) {
 					closeOpened($(this));
 				});
 			}
-
 
 			var that = $(this);
 		    var e = ev.originalEvent;
@@ -54,7 +63,7 @@
 
 		});
 		
-		var onTouchMove = $('body').on('touchmove', handler, function(ev) {
+		var onTouchMove = $('body').on('touchmove', handler, function(ev){
 			var that = $(this);
 			that.removeClass('swiped')
 		    var e = ev.originalEvent;
@@ -107,13 +116,11 @@
 		
 		if(binder) {
 			var onTap = $('body').on('click tap', handler, function(ev) {
-				if(moveStatus != 0) {
+				if (moveStatus != 0) {
 					var that = $(this);
 					var e = ev.originalEvent;
 					e.preventDefault();
-					closeOpened($(this));
 				}
-				
 			});
 		}
 	};
